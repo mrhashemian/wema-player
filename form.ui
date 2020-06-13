@@ -21,14 +21,9 @@
    <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;nj&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget #cover{
-image: url(&quot;assets/icon/cover.jpg&quot;) cover;
-background-position:center center;
-background-clip:padding;
-border-radius:7px;
-}</string>
+   <string notr="true"/>
   </property>
-  <widget class="QFrame" name="frame">
+  <widget class="QFrame" name="top">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -45,8 +40,103 @@ border-radius:7px;
    <property name="layoutDirection">
     <enum>Qt::RightToLeft</enum>
    </property>
+   <widget class="QLabel" name="songname">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>260</y>
+      <width>141</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Forte</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Song name</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="singer">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>260</y>
+      <width>80</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Forte</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>singer</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="timebar">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>305</y>
+      <width>405</width>
+      <height>10</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>64</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+    <property name="invertedAppearance">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="time">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>300</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <underline>false</underline>
+     </font>
+    </property>
+    <property name="text">
+     <string>00:00:00</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="cover" native="true">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>5</y>
+      <width>240</width>
+      <height>240</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QWidget #cover{
+image: url(&quot;assets/images/cover.jpg&quot;);
+}</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QFrame" name="frame_2">
+  <widget class="QFrame" name="controlers">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -104,11 +194,11 @@ border-radius:7px;
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton_2">
+   <widget class="QToolButton" name="stop">
     <property name="geometry">
      <rect>
       <x>65</x>
-      <y>10</y>
+      <y>11</y>
       <width>40</width>
       <height>40</height>
      </rect>
@@ -133,11 +223,11 @@ border-radius:7px;
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton_3">
+   <widget class="QToolButton" name="next">
     <property name="geometry">
      <rect>
       <x>145</x>
-      <y>10</y>
+      <y>11</y>
       <width>40</width>
       <height>40</height>
      </rect>
@@ -162,11 +252,11 @@ border-radius:7px;
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton_4">
+   <widget class="QToolButton" name="prev">
     <property name="geometry">
      <rect>
       <x>105</x>
-      <y>10</y>
+      <y>11</y>
       <width>40</width>
       <height>40</height>
      </rect>
@@ -192,7 +282,7 @@ border-radius:7px;
     </property>
    </widget>
   </widget>
-  <widget class="QTabWidget" name="tabWidget">
+  <widget class="QTabWidget" name="playlists">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -201,9 +291,12 @@ border-radius:7px;
      <height>300</height>
     </rect>
    </property>
-   <widget class="QWidget" name="tab">
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="recent">
     <attribute name="title">
-     <string>Tab 1</string>
+     <string>recently played</string>
     </attribute>
     <widget class="QListWidget" name="listWidget">
      <property name="geometry">
@@ -216,9 +309,9 @@ border-radius:7px;
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="queue">
     <attribute name="title">
-     <string>Tab 2</string>
+     <string>Queue</string>
     </attribute>
    </widget>
   </widget>
