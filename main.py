@@ -1,5 +1,5 @@
 # This Python file uses the following encoding: utf-8
-import sys
+import sys,pygame
 import os
 from PySide2.QtWidgets import QApplication, QWidget
 from PySide2.QtCore import QFile
@@ -19,8 +19,22 @@ class wema(QWidget):
         loader.load(ui_file, self)
         ui_file.close()
 
+def play(directory):
+    pygame.mixer.music.load(directory)
+    pygame.mixer.music.play(0)
+def pause():
+    pygame.mixer.music.pause()
+def unpause():
+    pygame.mixer.music.unpause()
+
 if __name__ == "__main__":
+    pygame.init()
+    pygame.mixer.init()
     app = QApplication([])
     widget = wema()
     widget.show()
+    directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music"
+    os.chdir(directory)
+    song_list=os.listdir(directory)
+    play(song_list[0])
     sys.exit(app.exec_())
