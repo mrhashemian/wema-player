@@ -8,9 +8,10 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-
+import pygame
+play_number=0
 class Ui_wema(object):
+    #self.lcd = QLCDNumber(self)
     def setupUi(self, wema):
         wema.setObjectName("wema")
         wema.resize(520, 720)
@@ -177,11 +178,11 @@ class Ui_wema(object):
 
         self.retranslateUi(wema)
         self.playlists.setCurrentIndex(0)
-        self.play_pause.clicked.connect(self.play_pause.deleteLater)
+        self.play_pause.clicked.connect(play)
         self.addlib.clicked.connect(self.addlib.deleteLater)
         self.removelib.clicked.connect(self.removelib.deleteLater)
         self.totalbtn.toggled['bool'].connect(self.totalbtn.update)
-        self.stop.clicked.connect(self.stop.deleteLater)
+        self.stop.clicked.connect(stop)
         self.prev.clicked.connect(self.prev.deleteLater)
         self.next.clicked.connect(self.next.deleteLater)
         self.shuffle.toggled['bool'].connect(self.shuffle.animateClick)
@@ -205,13 +206,41 @@ class Ui_wema(object):
         self.addlib.setText(_translate("wema", "+"))
         self.totalbtn.setText(_translate("wema", "total"))
         self.removelib.setText(_translate("wema", "-"))
+    
+#    def handlebutton(self,target):
+#        temp="self.{}".format(target)
+#        if target == "play":
+#            directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music\\myfile.mp3"
+#            self.lcd.display(temp(directory))
+#        else:
+#            self.lcd.display(temp)
 
-
+def play():
+    global play_number
+    if play_number==0:
+        directory=directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music\\myfile.mp3"
+        pygame.mixer.music.load(directory)
+        pygame.mixer.music.play(0)
+        play_number+=1
+    elif play_number%2==1:
+        pygame.mixer.music.pause()
+        play_number+=1
+    elif play_number%2==0:
+        pygame.mixer.music.unpause()
+        play_number+=1
+def stop():
+    global play_number
+    pygame.mixer.music.stop()
+    play_number=0
 if __name__ == "__main__":
     import sys
+    pygame.init()
+    pygame.mixer.init()
     app = QtWidgets.QApplication(sys.argv)
     wema = QtWidgets.QWidget()
     ui = Ui_wema()
     ui.setupUi(wema)
     wema.show()
     sys.exit(app.exec_())
+
+
