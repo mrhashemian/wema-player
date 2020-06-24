@@ -8,10 +8,11 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import pygame
+from tinytag import TinyTag
+import pygame,askdir,json
+
 play_number=0
 class Ui_wema(object):
-    #self.lcd = QLCDNumber(self)
     def setupUi(self, wema):
         wema.setObjectName("wema")
         wema.resize(520, 720)
@@ -207,14 +208,23 @@ class Ui_wema(object):
         self.totalbtn.setText(_translate("wema", "total"))
         self.removelib.setText(_translate("wema", "-"))
     
-#    def handlebutton(self,target):
-#        temp="self.{}".format(target)
-#        if target == "play":
-#            directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music\\myfile.mp3"
-#            self.lcd.display(temp(directory))
-#        else:
-#            self.lcd.display(temp)
-
+def add_library():
+    directory=askdir()
+    tag = TinyTag.get(directory)
+    data={tag.title:directory}
+    with open("assets\\file\\library.json",'a') as f:
+        json.dump(json.loads(data),f)
+def remove_library(name):
+    with open("assets\\file\\library.json",'a') as f:
+        data=json.load(f)
+    del data[name]
+    with open("assets\\file\\library.json",'w') as f:
+        json.dump(data,f)
+def add_playlist(play_list_name,**names):
+    data=json.load("assets\\file\\library.json")
+    plist_data={}
+#    with open("assets\\file\\{}.json".format(play_list_name),'w') as f:
+        
 def play():
     global play_number
     if play_number==0:
