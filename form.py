@@ -15,7 +15,30 @@ from tkinter import filedialog
 add_num = 0
 play_number = 0
 class Ui_wema(object):
-    
+    def play(self, num):
+        global current_played
+        current_played = num
+        with open("assets\\lib\\library.json",'r') as f:
+            json_object = json.load(f)
+        directory = json_object[str(num)]
+        directory = directory[1]
+        print(directory)
+        pygame.mixer.music.load(directory)
+        pygame.mixer.music.play(0)
+        tag = TinyTag.get(directory, image=True)
+        image_data = tag.get_image()
+        if image_data:
+            with open("assets/tmp/album_art.jpg", "wb") as f:
+                f.write(image_data)
+            covdir = "assets/tmp/album_art.jpg"
+        else:
+            covdir = "assets/images/cover.jpg"
+        self.retranslateUi(wema, directory)
+        self.cover.setStyleSheet("QWidget #cover{image: url(\"" + f"{covdir}" + "\");}")
+    def prevf(self):
+        self.play(current_played - 1)
+    def nextf(self):
+        self.play(current_played + 1)
     def add_music(self):
         global add_num
         directory = filedialog.askopenfilename(initialdir = "/",title = "Select a music",filetypes = (("wav fil","*.wav"),("mp3 fls","*.mp3")))
@@ -84,9 +107,7 @@ class Ui_wema(object):
         self.time.setObjectName("time")
         self.cover = QtWidgets.QWidget(self.top)
         self.cover.setGeometry(QtCore.QRect(140, 5, 240, 240))
-        self.cover.setStyleSheet("QWidget #cover{\n"
-"image: url(\"assets/images/cover.jpg\");\n"
-"}")
+        self.cover.setStyleSheet("QWidget #cover{image: url(\"assets/images/cover.jpg\");}")
         self.cover.setObjectName("cover")
         self.volume = QtWidgets.QToolButton(self.top)
         self.volume.setGeometry(QtCore.QRect(350, 260, 30, 30))
@@ -241,8 +262,8 @@ class Ui_wema(object):
         self.removelib.clicked.connect(self.removelib.deleteLater)
         self.totalbtn.toggled['bool'].connect(self.totalbtn.update)
         self.stop.clicked.connect(stop)
-        self.prev.clicked.connect(prev)
-        self.next.clicked.connect(next)
+        self.prev.clicked.connect(self.prevf)
+        self.next.clicked.connect(self.nextf)
         self.shuffle.toggled['bool'].connect(self.shuffle.animateClick)
         self.repeat.toggled['bool'].connect(self.repeat.animateClick)
         QtCore.QMetaObject.connectSlotsByName(wema)
@@ -283,19 +304,6 @@ class Ui_wema(object):
             self.addlib.setText(_translate("wema", "+"))
             self.totalbtn.setText(_translate("wema", "total"))
             self.removelib.setText(_translate("wema", "-"))
-
-    def play(self, num):
-        global current_played
-        current_played = num
-        with open("assets\\lib\\library.json",'r') as f:
-            json_object = json.load(f)
-        directory = json_object[str(num)]
-        directory = directory[1]
-        print(directory)
-        pygame.mixer.music.load(directory)
-        pygame.mixer.music.play(0)
-        self.retranslateUi(wema, directory)
-
 
  
 
@@ -339,13 +347,6 @@ def stop():
     global play_number
     pygame.mixer.music.stop()
     play_number = 0
-
-def prev():
-    play(current_played - 1)
-def next():
-    play(current_played + 1)
-
-
 
 if __name__ == "__main__":
     import sys
