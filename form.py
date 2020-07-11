@@ -9,17 +9,49 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from tinytag import TinyTag
-import pygame,askdir,json
+import pygame, json, random
+from tkinter import filedialog
 
+add_num = 0
 play_number=0
 class Ui_wema(object):
+    
+    def add_music(self):
+        global add_num
+        directory = filedialog.askopenfilename(initialdir = "/",title = "Select a music",filetypes = (("wav fil","*.wav"),("mp3 fls","*.mp3")))
+        tag = TinyTag.get(directory)
+        if tag.title:
+            data = tag.title
+        else:
+            data = os.path.splitext(os.path.basename(directory))[0]
+        with open("assets\\lib\\library.json",'r+') as f:
+            x = json.load(f)
+            x[add_num] = [data, directory]
+            f.seek(0)
+            f.truncate()
+            json.dump(x, f)
+        f.close()
+        self.listWidget.addItem(tag.title)
+        print(self.listWidget.itemClicked)
+        add_num += 1
+
+        return
+        
+
+    def addPL(self,  x):
+        self.x = QtWidgets.QWidget()
+        self.x.setObjectName(f"{x}")
+        self.playlists.addTab(self.x, "jkhjkhjkhjk")
+        #self.playlists.setTabText(self.playlists.indexOf(self.x), _translate("wema", f"{x}"))
+
+
     def setupUi(self, wema):
         wema.setObjectName("wema")
         wema.resize(520, 720)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/icon/play-button.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("assets/icon/play.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         wema.setWindowIcon(icon)
-        wema.setToolTip("<html><head/><body><p>nj</p></body></html>")
+        wema.setToolTip("")
         wema.setStyleSheet("")
         self.top = QtWidgets.QFrame(wema)
         self.top.setGeometry(QtCore.QRect(0, 0, 520, 320))
@@ -135,15 +167,37 @@ class Ui_wema(object):
         self.shuffle.setIconSize(QtCore.QSize(40, 40))
         self.shuffle.setAutoRaise(True)
         self.shuffle.setObjectName("shuffle")
+
+
         self.playlists = QtWidgets.QTabWidget(wema)
         self.playlists.setGeometry(QtCore.QRect(0, 380, 520, 300))
         self.playlists.setObjectName("playlists")
+
         self.recent = QtWidgets.QWidget()
         self.recent.setObjectName("recent")
+
+        self.listWidget = QtWidgets.QListWidget(self.recent)
+        self.listWidget.setGeometry(QtCore.QRect(0, 0, 520, 273))
+        self.listWidget.setObjectName("listWidget")
+        self.listWidget.itemDoubleClicked.connect(lambda: play(self.listWidget.currentRow()))
+
         self.playlists.addTab(self.recent, "")
+
+
         self.queue = QtWidgets.QWidget()
         self.queue.setObjectName("queue")
         self.playlists.addTab(self.queue, "")
+
+
+
+        x="p1"
+        y="p2"
+        self.addPL(x)
+        self.addPL(y)
+
+       
+
+
         self.bottom = QtWidgets.QFrame(wema)
         self.bottom.setGeometry(QtCore.QRect(0, 680, 520, 40))
         self.bottom.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -179,13 +233,13 @@ class Ui_wema(object):
 
         self.retranslateUi(wema)
         self.playlists.setCurrentIndex(0)
-        self.play_pause.clicked.connect(play)
-        self.addlib.clicked.connect(self.addlib.deleteLater)
+        self.play_pause.clicked.connect(pp)
+        self.addlib.clicked.connect(self.add_music)
         self.removelib.clicked.connect(self.removelib.deleteLater)
         self.totalbtn.toggled['bool'].connect(self.totalbtn.update)
         self.stop.clicked.connect(stop)
-        self.prev.clicked.connect(self.prev.deleteLater)
-        self.next.clicked.connect(self.next.deleteLater)
+        self.prev.clicked.connect(prev)
+        self.next.clicked.connect(next)
         self.shuffle.toggled['bool'].connect(self.shuffle.animateClick)
         self.repeat.toggled['bool'].connect(self.repeat.animateClick)
         QtCore.QMetaObject.connectSlotsByName(wema)
@@ -207,41 +261,67 @@ class Ui_wema(object):
         self.addlib.setText(_translate("wema", "+"))
         self.totalbtn.setText(_translate("wema", "total"))
         self.removelib.setText(_translate("wema", "-"))
-    
-def add_library():
-    directory=askdir()
-    tag = TinyTag.get(directory)
-    data={tag.title:directory}
-    with open("assets\\file\\library.json",'a') as f:
-        json.dump(json.loads(data),f)
+
+
+
+ 
+
+        
 def remove_library(name):
     with open("assets\\file\\library.json",'a') as f:
         data=json.load(f)
     del data[name]
     with open("assets\\file\\library.json",'w') as f:
         json.dump(data,f)
+
 def add_playlist(play_list_name,**names):
     data=json.load("assets\\file\\library.json")
     plist_data={}
-#    with open("assets\\file\\{}.json".format(play_list_name),'w') as f:
+    #with open("assets\\file\\{}.json".format(play_list_name),'w') as f:
         
-def play():
+def play(num):
+    global current_played
+    current_played = num
+    with open("assets\\lib\\library.json",'r') as f:
+        json_object = json.load(f)
+    directory = json_object[str(num)]
+    directory = directory[1]
+    print(directory)
+    pygame.mixer.music.load(directory)
+    pygame.mixer.music.play(0)
+    # if shuffle:
+    #     pass
+    #     rand = rand
+    #     directory = json_object[list_object[rand]]
+    # if repeat_one:
+    #     play_number = 0
+    #     play(name)
+    # if repeat:
+    #     play_number = 0
+    #     num += 1
+    #     directory = json_object[list_object[num]]
+
+def pp():
     global play_number
-    if play_number==0:
-        directory=directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music\\myfile.mp3"
-        pygame.mixer.music.load(directory)
-        pygame.mixer.music.play(0)
-        play_number+=1
-    elif play_number%2==1:
+    if play_number % 2 == 0:
         pygame.mixer.music.pause()
-        play_number+=1
-    elif play_number%2==0:
+    elif play_number % 2 == 1:
         pygame.mixer.music.unpause()
-        play_number+=1
+    play_number+=1
+    return
+
 def stop():
     global play_number
     pygame.mixer.music.stop()
-    play_number=0
+    play_number = 0
+
+def prev():
+    play(current_played - 1)
+def next():
+    play(current_played + 1)
+
+
+
 if __name__ == "__main__":
     import sys
     pygame.init()
