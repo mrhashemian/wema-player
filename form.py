@@ -9,9 +9,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from tinytag import TinyTag
-import pygame,askdir,json
+import pygame,json,time
 
 play_number=0
+play_time=pause_time=0
 class Ui_wema(object):
     def setupUi(self, wema):
         wema.setObjectName("wema")
@@ -189,7 +190,7 @@ class Ui_wema(object):
         self.shuffle.toggled['bool'].connect(self.shuffle.animateClick)
         self.repeat.toggled['bool'].connect(self.repeat.animateClick)
         QtCore.QMetaObject.connectSlotsByName(wema)
-
+time
     def retranslateUi(self, wema):
         _translate = QtCore.QCoreApplication.translate
         wema.setWindowTitle(_translate("wema", "wema player"))
@@ -226,20 +227,22 @@ def add_playlist(play_list_name,**names):
 #    with open("assets\\file\\{}.json".format(play_list_name),'w') as f:
         
 def play():
-    global play_number
+    global play_number,play_time
     if play_number==0:
         directory=directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music\\myfile.mp3"
         pygame.mixer.music.load(directory)
         pygame.mixer.music.play(0)
         play_number+=1
+        play_time=time.perf_counter()
     elif play_number%2==1:
+        pause_time=time.perf_counter()
         pygame.mixer.music.pause()
         play_number+=1
     elif play_number%2==0:
         pygame.mixer.music.unpause()
         play_number+=1
 def stop():
-    global play_number
+    global play_number,play_time
     pygame.mixer.music.stop()
     play_number=0
 if __name__ == "__main__":
@@ -252,5 +255,3 @@ if __name__ == "__main__":
     ui.setupUi(wema)
     wema.show()
     sys.exit(app.exec_())
-
-
