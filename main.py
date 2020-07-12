@@ -33,8 +33,4 @@ if __name__ == "__main__":
     app = QApplication([])
     widget = wema()
     widget.show()
-    directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music"
-    os.chdir(directory)
-    song_list=os.listdir(directory)
-    play(song_list[0])
     sys.exit(app.exec_())
