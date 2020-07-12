@@ -14,9 +14,26 @@ from tkinter import filedialog
 
 add_num = 0
 play_number = 0
+shuffle_falg=False
+repeat_flag= True
+class mythread(QtCore.QThread):
+    def run(self):
+        global ui
+        while True:
+            for event in pygame.event.get():
+                if event.type == SONG_END:
+                    if shuffle_falg:
+                        ui.shufflef()
+                    elif repeat_flag:
+                        ui.repeatf()
 class Ui_wema(object):
     def play(self, num):
-        global current_played
+        global SONG_END
+        SONG_END = pygame.USEREVENT + 1
+        pygame.mixer.music.set_endevent(SONG_END)
+        self.threads=mythread()
+        self.threads.start()
+        global current_played,play_number
         current_played = num
         with open("assets\\lib\\library.json",'r') as f:
             json_object = json.load(f)
@@ -33,12 +50,33 @@ class Ui_wema(object):
             covdir = "assets/tmp/album_art.jpg"
         else:
             covdir = "assets/images/cover.jpg"
+        play_number=0
         self.retranslateUi(wema, directory)
         self.cover.setStyleSheet("QWidget #cover{image: url(\"" + f"{covdir}" + "\");}")
     def prevf(self):
-        self.play(current_played - 1)
+        print(pygame.mixer.music.get_pos())
+        if current_played>0:
+            self.play(current_played - 1)
+        else:
+            print("first music")
+    def set_volumef(self,number):
+        pygame.mixer.music.set_volume(number)
+    def get_volumef(self):
+        pygame.mixer.music.get_volume()
     def nextf(self):
-        self.play(current_played + 1)
+        print(pygame.mixer.music.get_pos())
+        print(pygame.mixer.music.get_length())
+        if current_played<(add_num-1):
+            self.play(current_played + 1)
+        else:
+            print("last music")
+    def shufflef(self):
+        next_song = random.choice(range(0,add_num))
+        while next_song == current_played:
+            next_song = random.choice(range(0,add_num))
+        self.play(next_song)
+    def repeatf(self):
+        self.play(current_played)
     def add_music(self):
         global add_num
         directory = filedialog.askopenfilename(initialdir = "/",title = "Select a music",filetypes = (("wav fil","*.wav"),("mp3 fls","*.mp3")))
@@ -57,8 +95,6 @@ class Ui_wema(object):
         self.listWidget.addItem(tag.title)
         print(self.listWidget.itemClicked)
         add_num += 1
-
-        return
         
 
     def addPL(self,  x):
@@ -267,31 +303,47 @@ class Ui_wema(object):
         self.shuffle.toggled['bool'].connect(self.shuffle.animateClick)
         self.repeat.toggled['bool'].connect(self.repeat.animateClick)
         QtCore.QMetaObject.connectSlotsByName(wema)
-time
-    def retranslateUi(self, wema):
-        _translate = QtCore.QCoreApplication.translate
-        wema.setWindowTitle(_translate("wema", "wema player"))
-        self.songname.setText(_translate("wema", "Song name"))
-        self.time.setText(_translate("wema", "00:00:00"))
-        self.volume.setText(_translate("wema", "voulume"))
-        self.play_pause.setText(_translate("wema", "play"))
-        self.stop.setText(_translate("wema", "stop"))
-        self.next.setText(_translate("wema", "next"))
-        self.prev.setText(_translate("wema", "prev"))
-        self.repeat.setText(_translate("wema", "repeat"))
-        self.shuffle.setText(_translate("wema", "shuffle"))
-        self.playlists.setTabText(self.playlists.indexOf(self.recent), _translate("wema", "recently played"))
-        self.playlists.setTabText(self.playlists.indexOf(self.queue), _translate("wema", "Queue"))
-        self.addlib.setText(_translate("wema", "+"))
-        self.totalbtn.setText(_translate("wema", "total"))
-        self.removelib.setText(_translate("wema", "-"))
-    
-def add_library():
-    directory=askdir()
-    tag = TinyTag.get(directory)
-    data={tag.title:directory}
-    with open("assets\\file\\library.json",'a') as f:
-        json.dump(json.loads(data),f)
+
+
+
+
+
+
+
+
+    def retranslateUi(self, wema, dire =""):
+        if dire:
+            print(dire)
+            tag = TinyTag.get(dire)
+            if tag.title:
+                title = tag.title 
+            else:
+                title = os.path.splitext(os.path.basename(directory))[0]
+            if tag.artist:
+                title += " - " + tag.artist
+            self.songname.setText(title)
+            self.time.setText(f"{int(tag.duration / 3600):02d}:{int(tag.duration / 60):02d}:{int(tag.duration % 60):02d}")
+        else:
+            _translate = QtCore.QCoreApplication.translate
+            wema.setWindowTitle(_translate("wema", "wema player"))
+            self.songname.setText(_translate("wema", "song name"))
+            self.time.setText(_translate("wema", "00:00:00"))
+            self.volume.setText(_translate("wema", "voulume"))
+            self.play_pause.setText(_translate("wema", "play"))
+            self.stop.setText(_translate("wema", "stop"))
+            self.next.setText(_translate("wema", "next"))
+            self.prev.setText(_translate("wema", "prev"))
+            self.repeat.setText(_translate("wema", "repeat"))
+            self.shuffle.setText(_translate("wema", "shuffle"))
+            self.playlists.setTabText(self.playlists.indexOf(self.recent), _translate("wema", "recently played"))
+            self.playlists.setTabText(self.playlists.indexOf(self.queue), _translate("wema", "Queue"))
+            self.addlib.setText(_translate("wema", "+"))
+            self.totalbtn.setText(_translate("wema", "total"))
+            self.removelib.setText(_translate("wema", "-"))
+
+ 
+
+        
 def remove_library(name):
     with open("assets\\file\\library.json",'a') as f:
         data=json.load(f)
@@ -304,16 +356,24 @@ def add_playlist(play_list_name,**names):
     plist_data={}
     #with open("assets\\file\\{}.json".format(play_list_name),'w') as f:
         
-def play():
-    global play_number,play_time
-    if play_number==0:
-        directory=directory="C:\\Users\\Lenovo\\Documents\\GitHub\\wema-player\\assets\\music\\myfile.mp3"
-        pygame.mixer.music.load(directory)
-        pygame.mixer.music.play(0)
-        play_number+=1
-        play_time=time.perf_counter()
-    elif play_number%2==1:
-        pause_time=time.perf_counter()
+
+    
+    # if shuffle:
+    #     pass
+    #     rand = rand
+    #     directory = json_object[list_object[rand]]
+    # if repeat_one:
+    #     play_number = 0
+    #     play(name)
+    # if repeat:
+    #     play_number = 0
+    #     num += 1
+    #     directory = json_object[list_object[num]]
+
+def pp():
+    print(pygame.mixer.music.get_pos())
+    global play_number
+    if play_number % 2 == 0:
         pygame.mixer.music.pause()
     elif play_number % 2 == 1:
         pygame.mixer.music.unpause()
@@ -321,7 +381,7 @@ def play():
     return
 
 def stop():
-    global play_number,play_time
+    global play_number
     pygame.mixer.music.stop()
     play_number = 0
 
@@ -331,6 +391,7 @@ if __name__ == "__main__":
     pygame.mixer.init()
     app = QtWidgets.QApplication(sys.argv)
     wema = QtWidgets.QWidget()
+    global ui
     ui = Ui_wema()
     ui.setupUi(wema)
     wema.show()
