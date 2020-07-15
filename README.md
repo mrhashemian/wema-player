@@ -1,9 +1,10 @@
 <div dir="rtl">
+ 
 # wema-player
 
 A simple music player
 
-## Introduction
+## معرفی
 
 یک موزیک پلیر (ساده و گوگولی) با امکانات اولیه
 * اضافه کردن موزیک
@@ -16,6 +17,7 @@ A simple music player
 برای نصب پکیج های زیر را اضافه کنید
 ##### اگر pip را ندارید از لینک زیر کمک بگیرید 
 https://pip.pypa.io/en/stable/installing/
+<div dir="ltr">
 ### 1 - install PySide2
 ```
 pip install PySide2
@@ -32,9 +34,9 @@ pip install tinytag
 ```
 pip install pygame
 ```
- 
+</div>
 
-## Authors
+## توسعه دهنده
 
 * **ِwema team**- [github ID](https://github.com/mrhashemian)
 </div>
