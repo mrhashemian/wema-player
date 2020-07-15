@@ -16,22 +16,18 @@ A simple music player
 ##### اگر pip را ندارید از لینک زیر کمک بگیرید 
 https://pip.pypa.io/en/stable/installing/
 ### 1 - install PySide2
-### Code Box 
 ```
 pip install PySide2
 ```
 ### 2 - install PyQt5
-### Code Box 
 ```
 pip install PyQt5
 ```
 ### 3 - install tinytag
-### Code Box 
 ```
 pip install tinytag
 ```
-### 3 - install pygame
-### Code Box 
+### 4 - install pygame
 ```
 pip install pygame
 ```
