@@ -363,6 +363,19 @@ image: url(&quot;assets/images/cover.jpg&quot;);
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QToolButton" name="toolButton">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>30</y>
+      <width>24</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QTabWidget" name="playlists">
    <property name="geometry">
