@@ -1,3 +1,13 @@
+<div dir="rtl">
+
+سلام دنیا
+
+مرحبا العالم
+
+שלום בעולם
+
+ہیلو دنیا
+</div>
 # wema-player
 
 A simple music player
