@@ -3,19 +3,19 @@ from tinytag import TinyTag
 import pygame, json, random, os, sys
 from tkinter import filedialog
 
-add_num = 0
+mute_number = 0
+addmusic_num = 0
 play_number = 0
 pl_num = 1
 tab_number=0
+duration = 0 
 # 0 : play once
 # 1 : repeat current
 # 2 : repeat list
 # 3 : shuffle
 repeat_flag= 0
-def make_time(time):
-    minute=time//60
-    second=time-(60*minute)
-    return "{}:{}".format(minute,second)
+def make_time(time):   
+    return f"{int(time / 3600):02d}:{int(time / 60):02d}:{int(time % 60):02d}"
 with open("assets\\lib\\x0.json",'w') as f:
     f.write("{}")
 class mythread(QtCore.QThread):
@@ -24,6 +24,7 @@ class mythread(QtCore.QThread):
         while True:
             if (pygame.mixer.music.get_pos()!=-1):
                 ui.time.setText(make_time(pygame.mixer.music.get_pos()//1000))
+                ui.time2.setText(make_time(duration - pygame.mixer.music.get_pos()//1000))
             for event in pygame.event.get():
                 if event.type == SONG_END:
                     if repeat_flag == 1:
@@ -35,9 +36,16 @@ class mythread(QtCore.QThread):
 def repeat():
     global repeat_flag
     repeat_flag += 1
-    repeat_flag %= 3
-    print(repeat_flag)
-class Ui_Widget(QtWidgets.QWidget):
+    repeat_flag %= 4
+    if repeat_flag == 0:
+        ui.s.setText("repeat once")
+    if repeat_flag == 1:
+        ui.s.setText("repeat current")
+    if repeat_flag == 2:
+        ui.s.setText("repeat list")
+    if repeat_flag == 3:
+        ui.s.setText("shuffle")
+class Ui_wema(object):
     def play(self, num):
         global SONG_END
         print(num)
@@ -56,13 +64,14 @@ class Ui_Widget(QtWidgets.QWidget):
         pygame.mixer.music.play(0)
         tag = TinyTag.get(directory, image=True)
         image_data = tag.get_image()
+        global duration
+        duration = tag.duration
         if image_data:
             with open("assets/tmp/album_art.jpg", "wb") as f:
                 f.write(image_data)
             covdir = "assets/tmp/album_art.jpg"
         else:
             covdir = "assets/images/cover.jpg"
-        #play_number=0
         self.retranslateUi(wema, directory)
         self.cover.setStyleSheet("QWidget #cover{image: url(\"" + f"{covdir}" + "\");}")
     def prevf(self):
@@ -73,41 +82,53 @@ class Ui_Widget(QtWidgets.QWidget):
             print("first music")
     def nextf(self):
         print(pygame.mixer.music.get_pos())
-        if current_played<(add_num-1):
+        if current_played<(addmusic_num - 1):
             self.play(current_played + 1)
-        else:           #lambda
-            print("last music")
-    def set_volumef(self,number):
-        pygame.mixer.music.set_volume(number)
-    def get_volumef(self):
-        pygame.mixer.music.get_volume()
+        else:
+            self.play(0)
+    def volume_up(self):
+        pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.100)
+        self.sound.setText(str(int(pygame.mixer.music.get_volume() * 100)) + "%")
+    def volume_down(self):
+        pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() - 0.100)
+        self.sound.setText(str(int(pygame.mixer.music.get_volume() * 100)) + "%")
+    def mute(self):
+        global mute_number
+        if mute_number % 2 == 0:
+            pygame.mixer.music.set_volume(0)
+            self.sound.setText("muted")
+        else:
+            pygame.mixer.music.set_volume(0.5)
+            self.sound.setText("unmute")
+        mute_number += 1
+        mute_number %= 2
     def shufflef(self):
-        next_song = random.choice(range(0,add_num))
+        next_song = random.choice(range(0, addmusic_num))
         while next_song == current_played:
-            next_song = random.choice(range(0,add_num))
+            next_song = random.choice(range(0, addmusic_num))
+        print(next_song)
         self.play(next_song)
     def repeatf(self):
         self.play(current_played)
     def add_music(self):
-        global add_num
-        #directory = filedialog.askopenfilename(initialdir = "/",title = "Select a music",filetypes = (("wav fil","*.wav"),("mp3 fls","*.mp3")))
-        directory  = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
+        directory = filedialog.askopenfilename(initialdir = "/",title = "Select a music",filetypes = (("wav fil","*.wav"),("mp3 fls","*.mp3")))
+        #directory  = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
         tag = TinyTag.get(directory)
         if tag.title:
             data = tag.title
         else:
             data = os.path.splitext(os.path.basename(directory))[0]
+        global addmusic_num
         with open(f"assets\\lib\\x{self.playlists.currentIndex()}.json",'r+') as f:
             x = json.load(f)
-            x[add_num] = [data, directory]
+            addmusic_num = len(x)
+            x[addmusic_num] = [data, directory]
             f.seek(0)
             f.truncate()
             json.dump(x, f)
         f.close()
         temp = "self.x{}.addItem(tag.title)".format(self.playlists.currentIndex())
         exec(temp)
-        exec("print(self.x{}.itemClicked)".format(self.playlists.currentIndex()))
-        add_num += 1
     def remove_music(self):
         temp = "self.x{}.currentRow()".format(self.playlists.currentIndex())
         remove_num = exec(temp)
@@ -122,7 +143,6 @@ class Ui_Widget(QtWidgets.QWidget):
         temp = "self.x{}.takeItem({})".format(self.playlists.currentIndex(), self.playlists.currentIndex())
         exec(temp)
         exec("print(self.x{}.itemClicked)".format(self.playlists.currentIndex()))
-        add_num -= 1
     def addPL(self,  i):
         with open(f"assets\\lib\\x{i}.json",'w') as f:
             f.write("{}")
@@ -169,12 +189,8 @@ class Ui_Widget(QtWidgets.QWidget):
         font.setWeight(50)
         self.songname.setFont(font)
         self.songname.setObjectName("songname")
-        self.timebar = QtWidgets.QProgressBar(self.top)
-        self.timebar.setGeometry(QtCore.QRect(100, 305, 405, 10))
-        self.timebar.setProperty("value", 64)
-        self.timebar.setTextVisible(False)
-        self.timebar.setInvertedAppearance(True)
-        self.timebar.setObjectName("timebar")
+    
+        
         self.time = QtWidgets.QLabel(self.top)
         self.time.setGeometry(QtCore.QRect(10, 300, 101, 20))
         font = QtGui.QFont()
@@ -182,6 +198,39 @@ class Ui_Widget(QtWidgets.QWidget):
         font.setUnderline(False)
         self.time.setFont(font)
         self.time.setObjectName("time")
+
+        self.time2 = QtWidgets.QLabel(self.top)
+        self.time2.setGeometry(QtCore.QRect(110, 300, 101, 20))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setUnderline(False)
+        self.time2.setFont(font)
+        self.time2.setObjectName("time")
+
+        self.time3 = QtWidgets.QLabel(self.top)
+        self.time3.setGeometry(QtCore.QRect(210, 300, 101, 20))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setUnderline(False)
+        self.time3.setFont(font)
+        self.time3.setObjectName("time")
+
+        self.sound = QtWidgets.QLabel(self.top)
+        self.sound.setGeometry(QtCore.QRect(305, 300, 80, 20))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setUnderline(False)
+        self.sound.setFont(font)
+        self.sound.setObjectName("sound")
+
+        self.s = QtWidgets.QLabel(self.top)
+        self.s.setGeometry(QtCore.QRect(395, 300, 151, 20))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setUnderline(False)
+        self.s.setFont(font)
+        self.s.setObjectName("s")
+
         self.cover = QtWidgets.QWidget(self.top)
         self.cover.setGeometry(QtCore.QRect(140, 5, 240, 240))
         self.cover.setStyleSheet("QWidget #cover{image: url(\"assets/images/cover.jpg\");}")
@@ -195,6 +244,7 @@ class Ui_Widget(QtWidgets.QWidget):
         self.volume.setIconSize(QtCore.QSize(30, 30))
         self.volume.setAutoRaise(True)
         self.volume.setObjectName("volume")
+        self.volume.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
         self.vup = QtWidgets.QToolButton(self.top)
         self.vup.setGeometry(QtCore.QRect(440, 260, 30, 30))
@@ -204,6 +254,7 @@ class Ui_Widget(QtWidgets.QWidget):
         self.vup.setIconSize(QtCore.QSize(30, 30))
         self.vup.setAutoRaise(True)
         self.vup.setObjectName("volume")
+        self.vup.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
         self.vdown = QtWidgets.QToolButton(self.top)
         self.vdown.setGeometry(QtCore.QRect(480, 260, 30, 30))
@@ -213,6 +264,7 @@ class Ui_Widget(QtWidgets.QWidget):
         self.vdown.setIconSize(QtCore.QSize(30, 30))
         self.vdown.setAutoRaise(True)
         self.vdown.setObjectName("volume")
+        self.vdown.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         
 
         self.controlers = QtWidgets.QFrame(wema)
@@ -359,26 +411,16 @@ class Ui_Widget(QtWidgets.QWidget):
         self.removelib.clicked.connect(self.removePL)
         self.addmusic.clicked.connect(self.add_music)
         self.removemusic.clicked.connect(self.remove_music)
-        self.totalbtn.customContextMenuRequested.connect(self.showMenu)
+        self.totalbtn.customContextMenuRequested.connect(self.totalbtn.deleteLater)
         self.stop.clicked.connect(stop)
         self.prev.clicked.connect(self.prevf)
         self.next.clicked.connect(self.nextf)
         self.shuffle.clicked.connect(repeat)
+        self.vup.clicked.connect(self.volume_up)
+        self.vdown.clicked.connect(self.volume_down)
+        self.volume.clicked.connect(self.mute)
         QtCore.QMetaObject.connectSlotsByName(wema)
 
-    def showMenu(self,event):
-        menu = QMenu()
-        clear_action = menu.addAction("Clear Selection", self)
-        action = menu.exec_(self.mapToGlobal(event.pos()))
-        if action == clear_action:
-            self.clearSelection()
-    def clearSelection(self):
-        self.setCurrentIndex(-1)
-
-
-
-    
-    
     def retranslateUi(self, wema, dire =""):
         if dire:
             print(dire)
@@ -389,16 +431,17 @@ class Ui_Widget(QtWidgets.QWidget):
                 title = os.path.splitext(os.path.basename(directory))[0]
             if tag.artist:
                 title += " - " + tag.artist
-            self.songname.setText(title)
-            
-            #self.time.setText(f"{int(tag.duration / 3600):02d}:{int(tag.duration / 60):02d}:{int(tag.duration % 60):02d}")
-            
-            self.time.setText(f"{pygame.mixer.music.get_pos()}")
+            self.songname.setText(title)   
+            time = tag.duration
+            self.time3.setText(f"{int(time / 3600):02d}:{int(time / 60):02d}:{int(time % 60):02d}")       
         else:
             _translate = QtCore.QCoreApplication.translate
             wema.setWindowTitle(_translate("wema", "wema player"))
             self.songname.setText(_translate("wema", "song name"))
             self.time.setText(_translate("wema", "00:00"))
+            self.time2.setText(_translate("wema", "00:00"))
+            self.time3.setText(_translate("wema", "00:00"))
+            self.s.setText(_translate("wema", "repeat once"))
             self.volume.setText(_translate("wema", "voulume"))
             self.play_pause.setText(_translate("wema", "play"))
             self.stop.setText(_translate("wema", "stop"))
@@ -442,7 +485,6 @@ def add_playlist(play_list_name,**names):
     #     directory = json_object[list_object[num]]
 
 def pp():
-    print(pygame.mixer.music.get_pos())
     global play_number
     if play_number % 2 == 0:
         pygame.mixer.music.pause()
@@ -464,7 +506,7 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     wema = QtWidgets.QWidget()
     global ui
-    ui =Ui_Widget()
+    ui = Ui_wema()
     ui.setupUi(wema)
     wema.show()
     sys.exit(app.exec_())
