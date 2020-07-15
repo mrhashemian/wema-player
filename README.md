@@ -3,6 +3,7 @@
 # wema-player
 
 A simple music player
+[لینک گیت هاب](https://github.com/mrhashemian/wema-player/)
 
 ## معرفی
 
@@ -72,5 +73,5 @@ Ui  پروژه باQt creator  ساخته شده است و سپس با pyuic5 ب
 
 ## توسعه دهنده
 
-* **ِwema team**- [github ID](https://github.com/mrhashemian)
+* **ِwema team**- [github ID](https://github.com/mrhashemian/wema-player/)
 </div>
