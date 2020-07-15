@@ -65,7 +65,6 @@ class Ui_wema(object):
         pygame.mixer.music.get_volume()
     def nextf(self):
         print(pygame.mixer.music.get_pos())
-        print(pygame.mixer.music.get_length())
         if current_played<(add_num-1):
             self.play(current_played + 1)
         else:
