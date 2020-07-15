@@ -1,13 +1,4 @@
 <div dir="rtl">
-
-سلام دنیا
-
-مرحبا العالم
-
-שלום בעולם
-
-ہیلو دنیا
-</div>
 # wema-player
 
 A simple music player
@@ -45,4 +36,5 @@ pip install pygame
 
 ## Authors
 
-* **ِwema team**- [your github ID](https://github.com/mrhashemian)
+* **ِwema team**- [github ID](https://github.com/mrhashemian)
+</div>
