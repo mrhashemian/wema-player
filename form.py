@@ -130,16 +130,26 @@ class Ui_wema(object):
         temp = "self.x{}.addItem(tag.title)".format(self.playlists.currentIndex())
         exec(temp)
     def remove_music(self):
-        temp = "self.x{}.currentRow()".format(self.playlists.currentIndex())
-        remove_num = exec(temp)
-        print(remove_num)
+        remove_num=0
+        temp = "remove_num=self.x{}.currentRow()".format(self.playlists.currentIndex())
+        exec(temp)
         with open(f"assets\\lib\\x{self.playlists.currentIndex()}.json",'r+') as f:
             x = json.load(f)
+            mytemp=x[str(remove_num)][1]
             x.pop(str(remove_num))
             f.seek(0)
             f.truncate()
             json.dump(x, f)
-        f.close()
+        if pygame.mixer.music.get_busy():
+            tag = TinyTag.get(mytemp)
+            if tag.title:
+                title = tag.title 
+            else:
+                title = os.path.splitext(os.path.basename(mytemp))[0]
+            if tag.artist:
+                title += " - " + tag.artist
+            if title== self.songname.text():
+                stop()
         temp = "self.x{}.takeItem({})".format(self.playlists.currentIndex(), self.playlists.currentIndex())
         exec(temp)
         exec("print(self.x{}.itemClicked)".format(self.playlists.currentIndex()))
