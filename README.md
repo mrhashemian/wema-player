@@ -13,14 +13,28 @@ A simple music player
 
 ## نصب
 برای نصب پکیج های زیر را اضافه کنید
-##### pip --> https://pip.pypa.io/en/stable/installing/
-### 1 - pyside2
+##### اگر pip را ندارید از لینک زیر کمک بگیرید 
+https://pip.pypa.io/en/stable/installing/
+### 1 - install PySide2
 ### Code Box 
+```
 pip install PySide2
 ```
-Paste Some Code Here!
+### 2 - install PyQt5
+### Code Box 
 ```
-
+pip install PyQt5
+```
+### 3 - install tinytag
+### Code Box 
+```
+pip install tinytag
+```
+### 3 - install pygame
+### Code Box 
+```
+pip install pygame
+```
  
 
 ## Authors
