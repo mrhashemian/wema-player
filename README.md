@@ -35,14 +35,4 @@ pip install pygame
 
 ## Authors
 
-* **ِYour Name**- [your github ID](https://github.com/your github id)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Bullet Point
-
-* Bullet 1
-* Bullet 2
-* etc
+* **ِwema team**- [your github ID](https://github.com/mrhashemian)
