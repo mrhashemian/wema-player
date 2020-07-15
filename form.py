@@ -6,15 +6,22 @@ from tkinter import filedialog
 add_num = 0
 play_number = 0
 pl_num = 1
+tab_number=0
 # 0 : play once
 # 1 : repeat current
 # 2 : repeat list
 # 3 : shuffle
 repeat_flag= 0
+def make_time(time):
+    minute=time//60
+    second=time-(60*minute)
+    return "{}:{}".format(minute,second)
 class mythread(QtCore.QThread):
     def run(self):
         global ui
         while True:
+            if (pygame.mixer.music.get_pos()!=-1):
+                ui.time.setText(make_time(pygame.mixer.music.get_pos()//1000))
             for event in pygame.event.get():
                 if event.type == SONG_END:
                     if repeat_flag == 1:
@@ -29,6 +36,7 @@ def repeat():
 class Ui_wema(object):
     def play(self, num):
         global SONG_END
+        print(num)
         SONG_END = pygame.USEREVENT + 1
         pygame.mixer.music.set_endevent(SONG_END)
         self.threads=mythread()
@@ -67,7 +75,7 @@ class Ui_wema(object):
         print(pygame.mixer.music.get_pos())
         if current_played<(add_num-1):
             self.play(current_played + 1)
-        else:
+        else:           #lambda
             print("last music")
     def shufflef(self):
         next_song = random.choice(range(0,add_num))
@@ -93,7 +101,7 @@ class Ui_wema(object):
         f.close()
         temp = "self.x{}.addItem(tag.title)".format(self.playlists.currentIndex())
         exec(temp)
-        print(self.x0.itemClicked)
+        exec("print(self.x{}.itemClicked)".format(self.playlists.currentIndex()))
         add_num += 1
         
 
@@ -109,6 +117,13 @@ class Ui_wema(object):
         self.playlists.addTab(self.obj, "x")
         global pl_num
         pl_num += 1
+        
+        #self.x1.itemDoubleClicked.connect(lambda: self.play(self.x1.currentRow()))
+        global tab_number
+        tab_number+=1
+        temp2 = "self.x{}.itemDoubleClicked.connect(lambda: ui.play(ui.x{}.currentRow()))".format(tab_number,tab_number)
+        exec(temp2)
+
         #self.playlists.setTabText(self.playlists.indexOf(self.x), _translate("wema", f"{x}"))
 
         # self.recent = QtWidgets.QWidget()
@@ -239,6 +254,7 @@ class Ui_wema(object):
         icon7.addPixmap(QtGui.QPixmap("assets/icon/shuffle.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.shuffle.setIcon(icon7)
         self.shuffle.setIconSize(QtCore.QSize(40, 40))
+        
         self.shuffle.setAutoRaise(True)
         self.shuffle.setObjectName("shuffle")
 
@@ -254,10 +270,8 @@ class Ui_wema(object):
         self.x0.setObjectName("listWidget")
         self.playlists.addTab(self.recent, "")
 
-        i = self.playlists.currentIndex()
-        temp2 = "self.x{}.itemDoubleClicked.connect(lambda: play(self.x{}.currentRow()))".format(i,i)
-        exec(temp2)
-
+        
+        self.x0.itemDoubleClicked.connect(lambda: self.play(self.x0.currentRow()))
 
         # self.queue = QtWidgets.QWidget()
         # self.queue.setObjectName("queue")
@@ -306,7 +320,7 @@ class Ui_wema(object):
         self.removelib.setAutoRaise(True)
         self.removelib.setObjectName("removelib")
 
-
+    
         
         
         self.retranslateUi(wema)
@@ -348,7 +362,7 @@ class Ui_wema(object):
             _translate = QtCore.QCoreApplication.translate
             wema.setWindowTitle(_translate("wema", "wema player"))
             self.songname.setText(_translate("wema", "song name"))
-            self.time.setText(_translate("wema", "00:00:00"))
+            self.time.setText(_translate("wema", "00:00"))
             self.volume.setText(_translate("wema", "voulume"))
             self.play_pause.setText(_translate("wema", "play"))
             self.stop.setText(_translate("wema", "stop"))
