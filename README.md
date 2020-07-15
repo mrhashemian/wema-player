@@ -18,6 +18,7 @@ A simple music player
 ##### اگر pip را ندارید از لینک زیر کمک بگیرید 
 https://pip.pypa.io/en/stable/installing/
 <div dir="ltr">
+ 
 ### 1 - install PySide2
 ```
 pip install PySide2
