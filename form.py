@@ -520,3 +520,5 @@ if __name__ == "__main__":
     ui.setupUi(wema)
     wema.show()
     sys.exit(app.exec_())
+
+    
