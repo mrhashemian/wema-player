@@ -7,13 +7,9 @@ mute_number = 0
 addmusic_num = 0
 play_number = 0
 pl_num = 1
-tab_number=0
+tab_number = 0
 duration = 0 
-# 0 : play once
-# 1 : repeat current
-# 2 : repeat list
-# 3 : shuffle
-repeat_flag= 0
+repeat_flag = 0
 def make_time(time):   
     return f"{int(time / 3600):02d}:{int(time / 60):02d}:{int(time % 60):02d}"
 with open("assets\\lib\\x0.json",'w') as f:
@@ -34,6 +30,10 @@ class mythread(QtCore.QThread):
                     elif repeat_flag == 3:
                         ui.shufflef()
 def repeat():
+    # 0 : play once
+    # 1 : repeat current
+    # 2 : repeat list
+    # 3 : shuffle
     global repeat_flag
     repeat_flag += 1
     repeat_flag %= 4
@@ -175,6 +175,7 @@ class Ui_wema(object):
     def removePL(self):
         os.remove(f"assets\\lib\\x{self.playlists.currentIndex()}.json")
         self.playlists.hide(self.playlists.currentIndex())
+    #set up UI
     def setupUi(self, wema):
         wema.setObjectName("wema")
         wema.resize(520, 720)
@@ -199,8 +200,6 @@ class Ui_wema(object):
         font.setWeight(50)
         self.songname.setFont(font)
         self.songname.setObjectName("songname")
-    
-        
         self.time = QtWidgets.QLabel(self.top)
         self.time.setGeometry(QtCore.QRect(10, 300, 101, 20))
         font = QtGui.QFont()
@@ -208,7 +207,6 @@ class Ui_wema(object):
         font.setUnderline(False)
         self.time.setFont(font)
         self.time.setObjectName("time")
-
         self.time2 = QtWidgets.QLabel(self.top)
         self.time2.setGeometry(QtCore.QRect(110, 300, 101, 20))
         font = QtGui.QFont()
@@ -216,7 +214,6 @@ class Ui_wema(object):
         font.setUnderline(False)
         self.time2.setFont(font)
         self.time2.setObjectName("time")
-
         self.time3 = QtWidgets.QLabel(self.top)
         self.time3.setGeometry(QtCore.QRect(210, 300, 101, 20))
         font = QtGui.QFont()
@@ -224,7 +221,6 @@ class Ui_wema(object):
         font.setUnderline(False)
         self.time3.setFont(font)
         self.time3.setObjectName("time")
-
         self.sound = QtWidgets.QLabel(self.top)
         self.sound.setGeometry(QtCore.QRect(305, 300, 80, 20))
         font = QtGui.QFont()
@@ -232,7 +228,6 @@ class Ui_wema(object):
         font.setUnderline(False)
         self.sound.setFont(font)
         self.sound.setObjectName("sound")
-
         self.s = QtWidgets.QLabel(self.top)
         self.s.setGeometry(QtCore.QRect(395, 300, 151, 20))
         font = QtGui.QFont()
@@ -240,12 +235,10 @@ class Ui_wema(object):
         font.setUnderline(False)
         self.s.setFont(font)
         self.s.setObjectName("s")
-
         self.cover = QtWidgets.QWidget(self.top)
         self.cover.setGeometry(QtCore.QRect(140, 5, 240, 240))
         self.cover.setStyleSheet("QWidget #cover{image: url(\"assets/images/cover.jpg\");}")
         self.cover.setObjectName("cover")
-        
         self.volume = QtWidgets.QToolButton(self.top)
         self.volume.setGeometry(QtCore.QRect(400, 260, 30, 30))
         icon1 = QtGui.QIcon()
@@ -255,7 +248,6 @@ class Ui_wema(object):
         self.volume.setAutoRaise(True)
         self.volume.setObjectName("volume")
         self.volume.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-
         self.vup = QtWidgets.QToolButton(self.top)
         self.vup.setGeometry(QtCore.QRect(440, 260, 30, 30))
         icon1 = QtGui.QIcon()
@@ -265,7 +257,6 @@ class Ui_wema(object):
         self.vup.setAutoRaise(True)
         self.vup.setObjectName("volume")
         self.vup.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-
         self.vdown = QtWidgets.QToolButton(self.top)
         self.vdown.setGeometry(QtCore.QRect(480, 260, 30, 30))
         icon1 = QtGui.QIcon()
@@ -275,8 +266,6 @@ class Ui_wema(object):
         self.vdown.setAutoRaise(True)
         self.vdown.setObjectName("volume")
         self.vdown.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        
-
         self.controlers = QtWidgets.QFrame(wema)
         self.controlers.setGeometry(QtCore.QRect(0, 320, 520, 60))
         self.controlers.setObjectName("controlers")
@@ -324,7 +313,6 @@ class Ui_wema(object):
         self.prev.setIconSize(QtCore.QSize(40, 40))
         self.prev.setAutoRaise(True)
         self.prev.setObjectName("prev")
-
         self.shuffle = QtWidgets.QToolButton(self.controlers)
         self.shuffle.setGeometry(QtCore.QRect(470, 11, 40, 40))
         self.shuffle.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -332,35 +320,23 @@ class Ui_wema(object):
         icon7.addPixmap(QtGui.QPixmap("assets/icon/shuffle.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.shuffle.setIcon(icon7)
         self.shuffle.setIconSize(QtCore.QSize(40, 40))
-        
         self.shuffle.setAutoRaise(True)
         self.shuffle.setObjectName("shuffle")
-
-
         self.playlists = QtWidgets.QTabWidget(wema)        
         self.playlists.setGeometry(QtCore.QRect(0, 380, 520, 300))
         self.playlists.setObjectName("playlists")
-        
         self.recent = QtWidgets.QWidget()
         self.recent.setObjectName("recent")
         self.x0 = QtWidgets.QListWidget(self.recent)
         self.x0.setGeometry(QtCore.QRect(0, 0, 520, 273))
         self.x0.setObjectName("listWidget")
         self.playlists.addTab(self.recent, "")
-
-        
         self.x0.itemDoubleClicked.connect(lambda: self.play(self.x0.currentRow()))
-
-       
-
-
         self.bottom = QtWidgets.QFrame(wema)
         self.bottom.setGeometry(QtCore.QRect(0, 680, 520, 40))
         self.bottom.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.bottom.setFrameShadow(QtWidgets.QFrame.Raised)
         self.bottom.setObjectName("bottom")
-        
-
         self.addmusic = QtWidgets.QToolButton(self.bottom)
         self.addmusic.setGeometry(QtCore.QRect(10, 5, 30, 30))
         self.addmusic.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -371,7 +347,6 @@ class Ui_wema(object):
         self.addmusic.setIcon(icon8)
         self.addmusic.setIconSize(QtCore.QSize(30, 30))
         self.addmusic.setObjectName("addmusic")
-        
         self.removemusic = QtWidgets.QToolButton(self.bottom)
         self.removemusic.setGeometry(QtCore.QRect(50, 5, 30, 30))
         self.removemusic.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -381,7 +356,6 @@ class Ui_wema(object):
         self.removemusic.setIconSize(QtCore.QSize(30, 30))
         self.removemusic.setAutoRaise(True)
         self.removemusic.setObjectName("removemusic")
-
         self.totalbtn = QtWidgets.QToolButton(self.bottom)
         self.totalbtn.setGeometry(QtCore.QRect(245, 5, 30, 30))
         icon9 = QtGui.QIcon()
@@ -390,7 +364,6 @@ class Ui_wema(object):
         self.totalbtn.setIconSize(QtCore.QSize(30, 30))
         self.totalbtn.setAutoRaise(True)
         self.totalbtn.setObjectName("totalbtn")
-        
         self.addlib = QtWidgets.QToolButton(self.bottom)
         self.addlib.setGeometry(QtCore.QRect(440, 5, 30, 30))
         self.addlib.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -401,7 +374,6 @@ class Ui_wema(object):
         self.addlib.setIcon(icon8)
         self.addlib.setIconSize(QtCore.QSize(30, 30))
         self.addlib.setObjectName("addlib")
-
         self.removelib = QtWidgets.QToolButton(self.bottom)
         self.removelib.setGeometry(QtCore.QRect(480, 5, 30, 30))
         self.removelib.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -412,8 +384,7 @@ class Ui_wema(object):
         self.removelib.setAutoRaise(True)
         self.removelib.setObjectName("removelib")
 
-
-        
+        #botton functions
         self.retranslateUi(wema)
         self.playlists.setCurrentIndex(0)
         self.play_pause.clicked.connect(pp)
@@ -465,35 +436,6 @@ class Ui_wema(object):
             self.addlib.setText(_translate("wema", "+"))
             self.removelib.setText(_translate("wema", "-"))
 
- 
-
-        
-def remove_library(name):
-    with open("assets\\file\\library.json",'a') as f:
-        data=json.load(f)
-    del data[name]
-    with open("assets\\file\\library.json",'w') as f:
-        json.dump(data,f)
-
-def add_playlist(play_list_name,**names):
-    data=json.load("assets\\file\\library.json")
-    plist_data={}
-    #with open("assets\\file\\{}.json".format(play_list_name),'w') as f:
-        
-
-    
-    # if shuffle:
-    #     pass
-    #     rand = rand
-    #     directory = json_object[list_object[rand]]
-    # if repeat_one:
-    #     play_number = 0
-    #     play(name)
-    # if repeat:
-    #     play_number = 0
-    #     num += 1
-    #     directory = json_object[list_object[num]]
-
 def pp():
     global play_number
     if play_number % 2 == 0:
@@ -520,5 +462,3 @@ if __name__ == "__main__":
     ui.setupUi(wema)
     wema.show()
     sys.exit(app.exec_())
-
-    
